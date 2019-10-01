@@ -14,9 +14,11 @@
 \section{Technical Description}
 
 \subsection{Purpose}
+Sam’s Hauling, Inc. provides small dumpsters of various sizes to homeowners, contractors, realtors and property managers throughout the metro Denver area. They have a limited number of trucks with which to do these pickups and deliveries and in addition some customers set time windows for said pickups and deliveries. In addition, they have multiple depots that they store the dumpsters and the trucks have varying capacities. Currently, the pickup and delivery of these dumpsters is scheduled by a single individual using only Microsoft Excel. That means this problem is at the very least a Multiple Depot Vehicle Routing Problem. Their method for solving it thus far is very time intensive and unlikely to give an optimal solution or even a solution that would pass against a reasonable heuristic. It is quite likely then, that then implementation of some heuristic or metaheuristic could increase the efficiency of this process by a significant margin.
+
+The basic goal of our is to find a feasible solution that minimizes the expected routing costs while satisfying the customer demands and the constraints related to the number of vehicles and vehicle capacities. In order to do so we intend to build a model which will give a reasonably good solution to this MDVRP and pass against a reasonable heuristic saving Sam’s Hauling a significant amount of time.
 
 \subsection{Goals and Needs}
-The basic goal here is to find a feasible solution that minimizes the expected routing costs while satisfying the customer demands, and the constraints related to the number of vehicles, and the vehicles capacity.
 
 \subsection{Measuring Success and Communicating Results}
 

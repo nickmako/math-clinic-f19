@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[margin=1in]{geometry}
 
-\title{Math Clinic Proposal}
+\title{Math Clinic Proposal Draft}
 \author{Komi Agbo, Dalton Burke, Nick Mako, James Vance}
 \date{September 30th, 2019}
 
@@ -14,9 +14,9 @@
 \section{Technical Description}
 
 \subsection{Purpose}
-Sam’s Hauling, Inc. provides small dumpsters of various sizes to homeowners, contractors, realtors and property managers throughout the metro Denver area. They have a limited number of trucks with which to do these pickups and deliveries and in addition some customers set time windows for said pickups and deliveries. In addition, they have multiple depots that they store the dumpsters and the trucks have varying capacities. Currently, the pickup and delivery of these dumpsters is scheduled by a single individual using only Microsoft Excel. That means this problem is at the very least a Multiple Depot Vehicle Routing Problem. Their method for solving it thus far is very time intensive and unlikely to give an optimal solution or even a solution that would pass against a reasonable heuristic. It is quite likely then, that then implementation of some heuristic or metaheuristic could increase the efficiency of this process by a significant margin.
+Sam’s Hauling, Inc. provides small dumpsters of various sizes to homeowners, contractors, realtors and property managers throughout the metro Denver area. They have a limited number of trucks with which to do these pickups and deliveries and in addition some customers set time windows for said pickups and deliveries. In addition, they have multiple depots that they store the dumpsters and the trucks have varying capacities. Currently, the pickup and delivery of these dumpsters is scheduled by a single individual using only Microsoft Excel. That means this problem is at the very least a Multiple Depot Vehicle Routing Problem. Their method for solving it thus far is very time intensive and unlikely to give an optimal solution or even a solution that would pass against a reasonable heuristic. It is quite likely then, that the implementation of some heuristic or metaheuristic could increase the efficiency of this process by a significant margin.
 
-The basic goal of our is to find a feasible solution that minimizes the expected routing costs while satisfying the customer demands and the constraints related to the number of vehicles and vehicle capacities. In order to do so we intend to build a model which will give a reasonably good solution to this MDVRP and pass against a reasonable heuristic saving Sam’s Hauling a significant amount of time.
+The basic goal of ours is to find a feasible solution that minimizes the expected routing costs while satisfying the customer demands and the constraints related to the number of vehicles and vehicle capacities. In order to do so we intend to build a model which will give a reasonably good solution to this MDVRP and pass against a reasonable heuristic saving Sam’s Hauling a significant amount of time.
 
 
 \subsection{Goals and Needs}
@@ -24,10 +24,11 @@ The basic goal of our is to find a feasible solution that minimizes the expected
 \subsection{Project Objectives and Requirements}
 The overarching objective of our group is to create a solution concept for the problem presented by Sam's hauling.
 During this project it will be necessary for our group to become proficient in using LaTeX to prepare documents and writing code using Python.
-In order to accomplish this, we will first need to formally define the problem. To do so we will have to determine all variables and constraints of interest and write them out both mathematically and then programmatically within python.
+In order to accomplish this, we will first need to formally define the problem. To do so we will have to determine all variables and constraints of interest and write them out both mathematically and then programmatically within Python.
 Once we have a formal definition of the problem we will need to determine a method of solution.
 \subsubsection{Solution}
 The method of solution can be looked at in a number of parts:
+	
 Part 1: Resolving edge cases. 
 In order to simplify the problem a method to deal with the cases where the smallest and largest trucks are needed can be dealt with first. The method to do this will form the first step in the initial solution.
 
@@ -61,6 +62,18 @@ We will send our presentation to the company representatives for their appreciat
 The functions used with relative variables will be explained. It will get clear to everyone in the audience that we got an efficient proposal with reduced or least cost.
 
 \section{Management Plan}
+Our group has agreed to meet on Mondays at 10:00am, and potentially Wednesday mornings as needed. Here is a rough breakdown of our project:
+
+\begin{enumerate}
+	\item Learn Python, get development environment setup and integrated with git.
+	\item Draft initial architecture, how components (inputs, outputs, UI, etc.) will interact.
+	\item Refine model, choose heuristics and methods.
+	\item Write code to run simplified configurations, ignoring most constraints at first.
+	\item Create simple visualizations.
+	\item Add on constraints one at a time, working out errors/bugs along the way.
+	\item Test real data, debugging
+	\item Present software to client
+\end{enumerate}
 
 
 

@@ -14,6 +14,12 @@
 \section{Technical Description}
 
 \subsection{Purpose}
+Sam’s Hauling, Inc. provides small dumpsters of various sizes to homeowners, contractors, realtors and property managers throughout the metro Denver area. They have a limited number of trucks with which to do these pickups and deliveries and in addition some customers set time windows for said pickups and deliveries. Currently, the pickup and delivery of these dumpsters is done by a single individual using only Microsoft Excel. This means that a Multi-Attribute Vehicle Routing Problem (MAVRP) is essentially being solved by hand. It is quite likely then, that them implementation of some heuristic or metaheuristic could increase the efficiency of this process by a significant margin.
+
+In order to reduce the time and resources we intend to apply an algorthm which will give a reasonably good solution to this MAVRP. This must take into account the number of vehicles, the cost of each delivery, any time windows, and the type of vehicle to be used. Without such an algorthim it is unlikely that Sam's Hauling method for planning the daily deliveries would pass against a reasonable heuristic.
+
+\subsection{Goals and Needs}
+The basic goal here is to find a feasible solution that minimizes the expected routing costs while satisfying the customer demands, and the constraints related to the number of vehicles, and the vehicles capacity.
 
 \subsection{Project Objectives and Requirements}
 \paragraph

@@ -22,6 +22,9 @@ class ServiceSite(Location):
         self.can_size = can_size
         self.name = name
         self.service_type = service_type
+    
+    def calc_nearest_landfill(landfills):
+        self.nearest_landfill = min(landfills, key=lambda x: distance(self, x))
 
 def distance(from_location, to_location):
 

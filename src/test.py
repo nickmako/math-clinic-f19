@@ -34,10 +34,18 @@ deliveries = filter(lambda x: x.service_type == "D", jobs)
 pickups    = filter(lambda x: x.service_type == "P", jobs)
 switches   = filter(lambda x: x.service_type == "S", jobs)
 
-pairs = calc_DP_pairs(jobs)
+plt.plot([0,10], [5, 5], color='grey')
+plt.plot([5,5], [0, 10], color='grey')
+
+pairs = calc_DP_pairs(jobs, same_landfill=False)
 
 for p in pairs:
-    plt.plot([p[0].address[0], p[1].address[0]], [p[0].address[1], p[1].address[1]], color='black')
+    plt.plot([p[0].address[0], p[1].address[0]], [p[0].address[1], p[1].address[1]], color='black', linewidth=3)
+
+pairs = calc_DP_pairs(jobs, same_landfill=True)
+
+for p in pairs:
+    plt.plot([p[0].address[0], p[1].address[0]], [p[0].address[1], p[1].address[1]], color='cyan', linewidth=1)
 
 for d in deliveries:
     plt.plot(d.address[0], d.address[1], 'go', markersize=3)
@@ -51,5 +59,5 @@ for s in switches:
 for l in landfills:
     plt.plot(l.address[0], l.address[1], 'bo', markersize=7)
 
-
 plt.show()
+

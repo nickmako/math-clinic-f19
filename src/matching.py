@@ -40,11 +40,6 @@ def calc_DP_pairs(jobs, same_landfill=True, interzone_penalty=0):
     indices = m.compute(benefit_matrix)
     valid_indices = list(filter(lambda x: benefit_matrix[x[0]][x[1]] < 1000, indices))
 
-    s = 0
-
-    for i in valid_indices:
-        s += benefit_matrix[i[0]][i[1]]
-
     pairs = []
     for row, col in valid_indices:
         pairs.append((deliveries[row],pickups[col]))

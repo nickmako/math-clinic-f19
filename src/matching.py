@@ -38,10 +38,6 @@ def calc_DP_pairs(jobs, same_landfill=True, interzone_penalty=0):
     
     m = Munkres()
     indices = m.compute(benefit_matrix)
-    valid_indices = list(filter(lambda x: benefit_matrix[x[0]][x[1]] < 1000, indices))
-
-    pairs = []
-    for row, col in valid_indices:
-        pairs.append((deliveries[row],pickups[col]))
+    pairs = [(deliveries[x],pickups[y]) for x,y in indices if benefit_matrix[x][y] < 1000]
     
     return pairs

@@ -62,9 +62,9 @@ s2 += reduce(lambda a,b: a+b, map(lambda x:\
 s3 = reduce(lambda a,b: a+b, map(lambda x: distance(x.nearest_landfill,x) + \
         distance(x,x.nearest_landfill), jobs))
 
-print(s1)
-print(s2)
-print(s3)
+print("%.1f, %.1f%% saved" % (s1, 100 - float(100*s1)/s3))
+print("%.1f, %.1f%% saved" % (s2, 100 - float(100*s2)/s3))
+print("%.1f" % s3)
 
 # plotting
 plt.plot([0,10], [5, 5], color='grey')

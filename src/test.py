@@ -10,7 +10,7 @@ with open('../data/sample1/jobs.csv', 'rb') as f:
 landfills  = [Landfill.from_csv(l) for l in data if l[6] == "S"]
 deliveries = [ServiceSite.from_csv(d) for d in data if d[6] == "D"]
 pickups    = [ServiceSite.from_csv(p) for p in data if p[6] == "P"]
-switches   = [ServiceSite.from_csv(p) for p in data if p[6] == "AA"]
+switches   = [ServiceSite.from_csv(s) for s in data if s[6] == "AA"]
 
 jobs = deliveries + pickups + switches
 

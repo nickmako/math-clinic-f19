@@ -1,5 +1,6 @@
 # Testing ground
 from random import random
+from functools import reduce
 from matching import calc_DP_pairs
 from location import *
 import matplotlib.pyplot as plt
@@ -34,17 +35,49 @@ deliveries = filter(lambda x: x.service_type == "D", jobs)
 pickups    = filter(lambda x: x.service_type == "P", jobs)
 switches   = filter(lambda x: x.service_type == "S", jobs)
 
+# triangles
+pairs1 = calc_DP_pairs(list(jobs), same_landfill=False)
+pairs2 = calc_DP_pairs(list(jobs), same_landfill=True)
+
+# jobs which don't appear in triangles
+non_stars1 = [x for (x,y) in pairs1] + [y for (x,y) in pairs1]
+star_jobs1 = filter(lambda x: x not in non_stars1, jobs)
+
+non_stars2 = [x for (x,y) in pairs2] + [y for (x,y) in pairs2]
+star_jobs2 = filter(lambda x: x not in non_stars2, jobs)
+
+# total route sums
+s1 = reduce(lambda a,b: a+b, map(lambda x: distance(x.nearest_landfill,x) + \
+        distance(x,x.nearest_landfill),  star_jobs1))
+s1 += reduce(lambda a,b: a+b, map(lambda x:\
+    distance(x[0].nearest_landfill,x[0]) + distance(x[0],x[1]) +\
+    distance(x[1],x[1].nearest_landfill), pairs1))
+
+s2 = reduce(lambda a,b: a+b, map(lambda x: distance(x.nearest_landfill,x) + \
+        distance(x,x.nearest_landfill),  star_jobs2))
+s2 += reduce(lambda a,b: a+b, map(lambda x:\
+    distance(x[0].nearest_landfill,x[0]) + distance(x[0],x[1]) +\
+    distance(x[1],x[1].nearest_landfill), pairs2))
+
+s3 = reduce(lambda a,b: a+b, map(lambda x: distance(x.nearest_landfill,x) + \
+        distance(x,x.nearest_landfill), jobs))
+
+print(s1)
+print(s2)
+print(s3)
+
+# plotting
 plt.plot([0,10], [5, 5], color='grey')
 plt.plot([5,5], [0, 10], color='grey')
 
-pairs = calc_DP_pairs(jobs, same_landfill=False)
+for j in jobs:
+    plt.plot([j.address[0], j.nearest_landfill.address[0]], [j.address[1],
+        j.nearest_landfill.address[1]], 'grey', linestyle=":", linewidth=1)
 
-for p in pairs:
+for p in pairs1:
     plt.plot([p[0].address[0], p[1].address[0]], [p[0].address[1], p[1].address[1]], color='black', linewidth=3)
 
-pairs = calc_DP_pairs(jobs, same_landfill=True)
-
-for p in pairs:
+for p in pairs2:
     plt.plot([p[0].address[0], p[1].address[0]], [p[0].address[1], p[1].address[1]], color='cyan', linewidth=1)
 
 for d in deliveries:
@@ -60,4 +93,3 @@ for l in landfills:
     plt.plot(l.address[0], l.address[1], 'bo', markersize=7)
 
 plt.show()
-

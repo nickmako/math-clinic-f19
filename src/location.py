@@ -27,6 +27,10 @@ class ServiceSite(Location):
     def calc_nearest_landfill(self, landfills):
         self.nearest_landfill = min(landfills, key=lambda x: distance(self, x))
 
+    def __str__(self):
+        return "(%.1f,%.1f)," % (self.address[0],self.address[1]) + \
+               self.service_type + "," + self.service_time
+
 def distance(from_location, to_location):
     return \
             math.sqrt(\

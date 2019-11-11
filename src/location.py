@@ -31,7 +31,7 @@ class Landfill(Location):
         return Landfill(ID,address,lonlat)
 
 class ServiceSite(Location):
-    def __init__(self, ID, address, lonlat, map_code, truck_type, service_time, can_size, name, service_type):
+    def __init__(self, ID, address, lonlat, map_code, truck_type, service_time, can_size, name, service_type, used, transition_cost):
         super().__init__(ID, address, lonlat)
         self.map_code = map_code
         self.truck_type = truck_type
@@ -39,6 +39,8 @@ class ServiceSite(Location):
         self.can_size = can_size
         self.name = name
         self.service_type = service_type
+        self.used = used
+        self.transition_cost = transition_cost
 
     @staticmethod
     def from_csv(csv_line):
@@ -47,8 +49,8 @@ class ServiceSite(Location):
         lonlat = (float(csv_line[4]), float(csv_line[5]))
         service_type = csv_line[6]
         can_size = csv_line[7]
-        return ServiceSite(ID,address,lonlat,map_code="",truck_type="",\
-                service_time="ANY",can_size=can_size,name="",service_type=service_type)
+        return ServiceSite(ID, address, lonlat, map_code="", truck_type="",
+                           service_time="ANY", can_size=can_size, name="", service_type=service_type, used=False, transition_cost=0)
     
     def calc_nearest_landfill(self, landfills):
         self.nearest_landfill = min(landfills, key=lambda x: distance(self, x))

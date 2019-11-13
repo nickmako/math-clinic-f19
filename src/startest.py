@@ -42,7 +42,7 @@ def nontransition(landcurr):
     return ind
 
 
-def assignroute(driver0, driverstop0, route, transitiontrue):
+def assignroute(driver0, driverstop0, route, transitiontrue, tolandfill):
     # first update driver time to include additional added by new route/s
     if transitiontrue:
         driversschedule[driver0][0] = driversschedule[driver0][0] + route[0].transition_cost
@@ -52,19 +52,22 @@ def assignroute(driver0, driverstop0, route, transitiontrue):
     route[0].used = True
     # then add the locations that are part of the route to the drivers route
     if route[0].address == route[1].address:
-        driversschedule[driver][driverstop0] = route[0].address
-    else:
-        driversschedule[driver][driverstop0] = route[0].address
+        driversschedule[driver][driverstop0] = route[0]
         driverstop0 += 1
-        driversschedule[driver][driverstop0] = route[1].address
-
+        driversschedule[driver][driverstop0] = landfills[tolandfill]
+    else:
+        driversschedule[driver][driverstop0] = route[0]
+        driverstop0 += 1
+        driversschedule[driver][driverstop0] = route[1]
+        driverstop0 += 1
+        driversschedule[driver][driverstop0] = landfills[tolandfill]
         route[1].used = True
     driverstop0 += 1
     return driverstop0
 
 
 with open('../data/sample1/jobs.csv', 'rb') as f:
-# with open('jobs.csv', 'rb') as f:
+#with open('jobs.csv', 'rb') as f:
     data = [line[:-1].decode('utf-8').split(',') for line in f][1:]
 
 landfills = [Landfill.from_csv(l) for l in data if l[6] == "S"]
@@ -92,24 +95,18 @@ print(total3)
 finish = driver = base = 0
 current_landfill = 3
 fullday = 480
-driversschedule = [[0 for x in range(30)] for y in range(30)]
+driversschedule = [[0 for x in range(100)] for y in range(20)]
 # while loop runs until all routes are assigned
 while finish < 1:
     driverstop = 2
     nextdriver = 0
+    driversschedule[driver][0] = 0
+    driversschedule[driver][1] = landfills[0]
     temp_landfill = current_landfill
     # if landfill isn't the base assign transitions there and back
     if current_landfill > 0:
         transition1 = transition(base, current_landfill)
-        transition1[0].used = True
-        driversschedule[driver][0] = transition1[0].transition_cost
-        if transition1[0].address == transition1[1].address:
-            driversschedule[driver][1] = transition1[0].address
-        else:
-            driversschedule[driver][1] = transition1[0].address
-            driversschedule[driver][2] = transition1[1].address
-            transition1[1].used = True
-            driverstop += 1
+        driverstop = assignroute(driver, driverstop, transition1, True, temp_landfill)
         # transition 2 is determined for calculations, but not assigned immediately as it may be discarded
         transition2 = transition(base, current_landfill)
     # while loop runs until driver's schedule is full
@@ -121,14 +118,14 @@ while finish < 1:
             if temp_landfill > 0:
                 if distance(nontran[0], nontran[0].nearest_landfill) + distance(nontran[1], nontran[1].nearest_landfill) \
                         + distance(nontran[1], nontran[0]) + transition2[0].transition_cost + driversschedule[driver][0] < fullday:
-                    driverstop = assignroute(driver, driverstop, nontran, False)
+                    driverstop = assignroute(driver, driverstop, nontran, False, temp_landfill)
                 else:
-                    driverstop = assignroute(driver, driverstop, transition2, True)
+                    driverstop = assignroute(driver, driverstop, transition2, True, 0)
                     nextdriver = 1
             else:
                 if distance(nontran[0], nontran[0].nearest_landfill) + distance(nontran[1], nontran[1].nearest_landfill) \
                         + distance(nontran[1], nontran[0]) + driversschedule[driver][0] < fullday:
-                    driverstop = assignroute(driver, driverstop, nontran, False)
+                    driverstop = assignroute(driver, driverstop, nontran, False, temp_landfill)
                 else:
                     nextdriver = 1
         # if no more non tran routes exist for the landfill the landfill is changed if not the base and if it is the base the day is finished
@@ -136,8 +133,8 @@ while finish < 1:
             # if transition 2 includes a point in the landfill being finished it must be used next and then the driver will finish near the base
             if transition2[0].nearest_landfill == landfills[current_landfill] or transition2[1].nearest_landfill == landfills[current_landfill]:
                 current_landfill = current_landfill - 1
-                driverstop = assignroute(driver, driverstop, transition2, True)
                 temp_landfill = 0
+                driverstop = assignroute(driver, driverstop, transition2, True, temp_landfill)
             # otherwise 2 new transitions are assigned: 1 to the next landfill and 1 from the next landfill to the base
             else:
                 temp_landfill = current_landfill
@@ -147,13 +144,13 @@ while finish < 1:
                 # if bothe new transitions can be done without willing the day the transition to the next landfill is assigned
                 # and the new transition to base replaces the old transition 2
                 if transition4[0].transition_cost + transition3[0].transition_cost + driversschedule[driver][0] < fullday:
-                    driverstop = assignroute(driver, driverstop, transition3, True)
+                    temp_landfill = current_landfill
+                    driverstop = assignroute(driver, driverstop, transition3, True, temp_landfill)
                     transition2 = transition4
                 # if both cannot be done the driver uses transition 2  to go back to the base and finishes the day there
                 else:
-                    driverstop = assignroute(driver, driverstop, transition2, True)
                     temp_landfill = 0
-                temp_landfill = current_landfill
+                    driverstop = assignroute(driver, driverstop, transition2, True, temp_landfill)
         else:
             finish = 1
             nextdriver = 1

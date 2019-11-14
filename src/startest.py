@@ -1,5 +1,6 @@
 from location import *
 from matching import *
+import matplotlib.pyplot as plt
 
 
 def transition(landstart, landfinish):
@@ -85,7 +86,7 @@ non_stars2 = [d for (d, p) in pairs2] + [p for (d, p) in pairs2]
 star_jobs1 = [(j, j) for j in jobs if j not in non_stars1]
 star_jobs2 = [(j, j) for j in jobs if j not in non_stars2]
 alljobs = pairs1+star_jobs1
-# alljobs = pairs2+star_jobs2
+#alljobs = pairs2+star_jobs2
 
 total3 = 0
 for x in alljobs:
@@ -94,7 +95,7 @@ print(total3)
 
 finish = driver = base = 0
 current_landfill = 3
-fullday = 480
+fullday = 300
 driversschedule = [[0 for x in range(100)] for y in range(20)]
 # while loop runs until all routes are assigned
 while finish < 1:
@@ -159,3 +160,23 @@ total = 0
 for x in driversschedule:
     total = total+x[0]
 print(total)
+
+for driver in driversschedule:
+    plt.plot([x.lonlat[0] for x in driver if not isinstance(x,(int,float))],
+            [x.lonlat[1] for x in driver if not isinstance(x,(int,float))])
+
+for d in deliveries:
+    plt.plot(d.lonlat[0], d.lonlat[1], 'go', markersize=3)
+
+for p in pickups:
+    plt.plot(p.lonlat[0], p.lonlat[1], 'ro', markersize=3)
+
+for s in switches:
+    plt.plot(s.lonlat[0], s.lonlat[1], 'mo', markersize=3)
+
+for l in landfills:
+    plt.plot(l.lonlat[0], l.lonlat[1], 'bo', markersize=7)
+
+
+
+plt.show()

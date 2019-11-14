@@ -9,7 +9,9 @@ def transition(landstart, landfinish):
     for z in alljobs:
         if z[0].used != 1:
             temp = distance(z[0], landfills[landstart]) + distance(z[1], landfills[landfinish]) - distance(z[0], z[0].nearest_landfill) \
-                   - distance(z[1], z[1].nearest_landfill) - distance(z[0], z[1])
+                   - distance(z[1], z[1].nearest_landfill)
+            if z[0].nearest_landfill != z[1].nearest_landfill:
+                temp = temp - distance(z[1], z[0].nearest_landfill) + distance(z[1], z[1].nearest_landfill)
         else:
             temp = 10000
         if temp < trancost:
@@ -45,9 +47,9 @@ def nontransition(landcurr):
 def assignroute(driver0, driverstop0, route, transitiontrue, tolandfill):
     # first update driver time to include additional added by new route/s
     if transitiontrue:
-        driversschedule[driver0][0] = driversschedule[driver0][0] + route[0].transition_cost
+        drivertime[driver0][0] = drivertime[driver0][0] + route[0].transition_cost
     else:
-        driversschedule[driver0][0] = driversschedule[driver0][0] + distance(route[0], route[0].nearest_landfill) \
+        drivertime[driver0][0] = drivertime[driver0][0] + distance(route[0], route[0].nearest_landfill) \
                                       + distance(route[1], route[1].nearest_landfill) + distance(route[0], route[1])
     route[0].used = True
     # then add the locations that are part of the route to the drivers route
@@ -67,7 +69,7 @@ def assignroute(driver0, driverstop0, route, transitiontrue, tolandfill):
 
 
 with open('../data/sample1/jobs.csv', 'rb') as f:
-#with open('jobs.csv', 'rb') as f:
+# with open('jobs.csv', 'rb') as f:
     data = [line[:-1].decode('utf-8').split(',') for line in f][1:]
 
 landfills = [Landfill.from_csv(l) for l in data if l[6] == "S"]
@@ -85,7 +87,7 @@ non_stars2 = [d for (d, p) in pairs2] + [p for (d, p) in pairs2]
 star_jobs1 = [(j, j) for j in jobs if j not in non_stars1]
 star_jobs2 = [(j, j) for j in jobs if j not in non_stars2]
 alljobs = pairs1+star_jobs1
-# alljobs = pairs2+star_jobs2
+#alljobs = pairs2+star_jobs2
 
 total3 = 0
 for x in alljobs:
@@ -95,13 +97,14 @@ print(total3)
 finish = driver = base = 0
 current_landfill = 3
 fullday = 480
-driversschedule = [[0 for x in range(100)] for y in range(20)]
+driversschedule = [[0 for x in range(200)] for y in range(20)]
+drivertime = [[0 for x in range(1)] for y in range(20)]
 # while loop runs until all routes are assigned
 while finish < 1:
-    driverstop = 2
+    driverstop = 1
     nextdriver = 0
-    driversschedule[driver][0] = 0
-    driversschedule[driver][1] = landfills[0]
+    drivertime[driver][0] = 0
+    driversschedule[driver][0] = landfills[0]
     temp_landfill = current_landfill
     # if landfill isn't the base assign transitions there and back
     if current_landfill > 0:
@@ -117,14 +120,14 @@ while finish < 1:
             # if the landfill is not the base the transition is counted against the full day to determine whether the route can be used
             if temp_landfill > 0:
                 if distance(nontran[0], nontran[0].nearest_landfill) + distance(nontran[1], nontran[1].nearest_landfill) \
-                        + distance(nontran[1], nontran[0]) + transition2[0].transition_cost + driversschedule[driver][0] < fullday:
+                        + distance(nontran[1], nontran[0]) + transition2[0].transition_cost + drivertime[driver][0] < fullday:
                     driverstop = assignroute(driver, driverstop, nontran, False, temp_landfill)
                 else:
                     driverstop = assignroute(driver, driverstop, transition2, True, 0)
                     nextdriver = 1
             else:
                 if distance(nontran[0], nontran[0].nearest_landfill) + distance(nontran[1], nontran[1].nearest_landfill) \
-                        + distance(nontran[1], nontran[0]) + driversschedule[driver][0] < fullday:
+                        + distance(nontran[1], nontran[0]) + drivertime[driver][0] < fullday:
                     driverstop = assignroute(driver, driverstop, nontran, False, temp_landfill)
                 else:
                     nextdriver = 1
@@ -143,7 +146,7 @@ while finish < 1:
                 transition4 = transition(current_landfill, base)
                 # if bothe new transitions can be done without willing the day the transition to the next landfill is assigned
                 # and the new transition to base replaces the old transition 2
-                if transition4[0].transition_cost + transition3[0].transition_cost + driversschedule[driver][0] < fullday:
+                if transition4[0].transition_cost + transition3[0].transition_cost + drivertime[driver][0] < fullday:
                     temp_landfill = current_landfill
                     driverstop = assignroute(driver, driverstop, transition3, True, temp_landfill)
                     transition2 = transition4
@@ -156,6 +159,6 @@ while finish < 1:
             nextdriver = 1
     driver += 1
 total = 0
-for x in driversschedule:
+for x in drivertime:
     total = total+x[0]
 print(total)

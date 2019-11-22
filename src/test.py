@@ -3,6 +3,7 @@ from functools import reduce
 from matching import calc_DP_pairs
 from location import *
 import matplotlib.pyplot as plt
+from scipy.spatial import Voronoi, voronoi_plot_2d
 
 with open('../data/sample1/jobs.csv', 'rb') as f:
     data = [line[:-1].decode('utf-8').split(',') for line in f][1:]
@@ -53,6 +54,9 @@ print("%.1f" % s3)
 
 # plotting
 
+vor = Voronoi([l.lonlat for l in landfills])
+voronoi_plot_2d(vor)
+
 for j in jobs:
     plt.plot([j.lonlat[0], j.nearest_landfill.lonlat[0]], [j.lonlat[1],
         j.nearest_landfill.lonlat[1]], 'grey', linestyle=":", linewidth=1)
@@ -74,5 +78,6 @@ for s in switches:
 
 for l in landfills:
     plt.plot(l.lonlat[0], l.lonlat[1], 'bo', markersize=7)
+
 
 plt.show()

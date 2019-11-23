@@ -55,7 +55,7 @@ print("%.1f" % s3)
 # plotting
 
 vor = Voronoi([l.lonlat for l in landfills])
-voronoi_plot_2d(vor)
+#voronoi_plot_2d(vor)
 
 for j in jobs:
     plt.plot([j.lonlat[0], j.nearest_landfill.lonlat[0]], [j.lonlat[1],

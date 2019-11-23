@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% clinicPreamble.tex    input to preamble of clinic report
+% created 12-20-00 by Harvey J. Greenberg
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Packages that might be used
+
+\usepackage{algorithmic}       % enables algorithm environment
+\usepackage{amsbsy}            % allows bold + italic
+\usepackage{amsmath}           % formerly amstex
+\usepackage{amssymb}           % ams symbols (\mathbb fonts)
+\usepackage{bibunits}          % enables multiple bibliographies
+\usepackage{bm}                % bold math fonts (\mathbm)
+\usepackage[T1]{fontenc}       % ...to write \textbf{\textsc{..}}
+\usepackage{fancyvrb,moreverb} % verbatim
+\usepackage{float}             % enable float [H] option
+\usepackage{graphicx}          % graphics (pst-all can be added to use PStricks)
+\usepackage{mathrsfs}          % more math symbols (viz., \mathscr)
+\usepackage{multirow}          % like multicolumn
+\usepackage{theorem}           % enables more control over newtheorem
+\usepackage{url}               % \url{...}
+
+% theorem package enables the following
+{\theorembodyfont{\rmfamily} \newtheorem{example}{Example}[section]}
+{\theorembodyfont{\rmfamily} \newtheorem{remark}{Remark}[section]}
+{\theorembodyfont{\rmfamily} \newtheorem{definition}{Definition}[section]}
+%                  ^ make text in definition roman (not italic)
+\renewcommand\url{\begingroup\urlstyle{rm}\Url}  % puts url in rm font
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% End Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{clinicmacros}  % clinic (global) commands and environments
+
+% Formatting specs
+\raggedbottom              % Prevents vertical spaces inserted to justify
+%\pagestyle{empty}          % This is just for cover page.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% End of file (eof) %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+

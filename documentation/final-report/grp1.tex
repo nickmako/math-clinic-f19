@@ -1,0 +1,106 @@
+%%
+%% Edit the following two statements with the title of your report and the names of your team members.
+
+\def\mytitle{The Star Solution}
+
+\def\myauthor{Komi Agbo, Dalton Burke, Nick Mako, James Vance}
+
+
+%%=========================================
+%%
+%%  Do no edit the following block
+%%
+%%VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
+\ifdefined\CLINICMAIN
+(by \myauthor)
+
+\else
+
+\documentclass{article}
+\usepackage{graphicx}
+%\input{clinicPreamble}
+\graphicspath{{images/}}
+%
+\title{\mytitle}
+\author{\myauthor}
+\begin{document}
+\maketitle
+\fi
+%
+% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+%  DO NOT EDIT ABOVE THIS LINE
+%===========================================
+
+%  Your Report Starts Here.
+\graphicspath{{images/}}
+
+\section*{Abstract} Sam’s Hauling, Inc. provides waste disposal containers throughout the Denver metro area. In order to increase efficiency they are seeking a way to create delivery schedules for their drivers. Treating this problem similar to the Traveling Salesman Problem allowed...
+\\
+\newline
+\noindent \textbf{\textit{Keywords - key1, key2, key3}}
+
+\newpage
+
+\section{Introduction} \label{grp1:intro}
+
+Sam's Hauling, Inc. provides small dumpsters of various sizes to homeowners, contractors, realtors and property managers throughout the metro Denver area. They have a limited number of trucks with which to do these pickups and deliveries and in addition some customers set time windows for said pickups and deliveries. In addition, they have multiple depots that they store the dumpsters and the trucks have varying capacities. Currently, the pickup and delivery of these dumpsters is scheduled by a single individual using only Microsoft Excel. This method for solving it is very time intensive and is less likely to be the most efficient solution. It is quite likely then, that the implementation of some heuristic or metaheuristic could increase the efficiency of this process by a significant margin.
+
+At first glance this problem seems like some variation of the Vehicle Routing Problem (VRP). It is possible however, to simplify the problem in a manner that would make it more like a Traveling Salesman Problem (TSP) and thus simpler to solve for an optimal solution. In order to do this, we will first implement what we are calling the Star Method. Following the successful implementation of the Star Method given the necessary constraints of the problem we will then use what we call the Triangle Method. After a successful implementation of the Triangle Method with the necessary constraints the next step is to assign routes to each driver.
+
+\section{Background} \label{grp1:background}
+
+ Sam’s Hauling problem involves identifying the most optimal route to move from a depot visit a given set of service sites and return to that depot. This makes the problem very similar to the Traveling Salesman Problem which asks the question, ``Given a list of cities and the distances between each pair of cities, what is the shortest possible route that visits each city and returns to the origin city?" The TSP can be modelled as a graph where cities are the graph’s vertices and paths are the graph’s edges. Similarly, Sam’s Hauling problem can be modelled as a graph where the depots and service sites are the vertices and the routes between them are the edges.
+
+\section{Methods} \label{grp1:methods}
+
+Using the way that the landfills and storage locations are visited allows the elimination of the ordering constraint that would be imposed by the VRP. Then treating each service site as a switch allows for the further simplification of the problem. With every service site a switch then drivers would move from the nearest landfill for delivery portion and then back to the nearest landfill after the pickup portion. Filling the routes with this data then creates several stars with each landfill being a center and the service sites around it being the points as can be seen in figure 1. Each service site around a star can then be visited in any order without an impact on the cost.
+
+\begin{center}
+\includegraphics[width=5cm]{example-image}
+\end{center}
+
+Since the problem doesn't actually consist solely of switches it is necessary to expand the star solution to include pickup and drop-offs. This provides a route of landfill, drop-off, pick-up, landfill for a driver, creating a triangle (figure 2). These triangle routes allow for further optimization as long as the optimal triangles are chosen.
+
+\begin{center}
+\includegraphics[width=5cm]{example-image}
+\end{center}
+
+To make this decision, we can construct a bipartite graph, one set containing the drop-offs, and the other containing pick-ups, and the existence of an edge between a drop-off and pick-up means that they are compatible (their constraints can work together). The weight of the edge between a drop-off and a pick-up is calculated as the difference between doing each normally (star method) and doing them combined as a triangle. In this graph, a matching pairs up drop-offs and pick-ups to be completed as a triangle. A minimum matching in this graph gives us the best possible choice of triangles in order to make the route take the least amount of time.
+
+Due to the nature of the problem simply choosing the most optimum triangle alone isn't enough to give an optimal solution. Transitions between the landfill sites must also be considered. In order to determine each transition $\min (RN_i - RT_i)$ for $i=0$ to $i=n$ is calculated, where $RN$ is the route cost normally, $RT$ is the cost of doing the transition, and $n$is the number of routes that are unassigned. In the case where pairs are constrained $\min(RN_i - RT_i)$ will always be positive since doing the route normally will always be the same or shorter. However in the case where pairs are non-constrained and can be made between zones the cost of doing a route normally can be less than the cost of doing a transition. Non-transition routes are then simply assigned primarily to fulfill constraints and secondarily in descending order based on distance to the main hub of the company.
+
+The two constraints that need to be considered are the time constraint and the truck size constraint. Customers may request a delivery in specifically the AM or PM hours of the day. In order to
+
+deal with this constraint routes identified as such are assigned with priority when a driver’s schedule is within the time period. In addition, some trucks are restricted as to where they can deliver cans to. This constraint is resolved by identifying routes that require a specific truck and assigning the first driver that truck with a special schedule that services all routes with the constraint and then performs as a regular driver within the zone they end in.
+
+A final issue considered is the supply of cans at a given depot. There are two types of can deficits that must be dealt with. First are hard can container deficits which occurs when there are more cans that need to leave the storage location than will be returned to it on a given day. These can be resolved in two stages. The first stage is for a deficit of size up to the number of drivers that will start their day driving to the zone with a deficit. In this stage the calculation for transitioning will be altered to only consider routes with a pickup of the appropriate size can outside the zone with the deficit. In the second stage where the problem cannot be resolved in the initial stage the first driver assigned to the area will be assigned special transitions that both originate and end in the deficit zone, but which leave in order to go to a pickup of the size of the can with a deficit. Next is a soft can deficit which means that the number of returns plus the initial stock of cans at a depot is at least as large as the number of cans of a particular size. This can still be an issue if too many deliveries happen before the pickups for a particular size of can. Even where returns plus the initial stock are at least as large as the number of cans of a particular size a problem may occur if too many deliveries happen before the pickups for a particular size of can. To resolve this the draft schedule is simulated through the day and where conflict arises a swap will be made to fix the problem with priority given to swapping within the same driver’s schedule. Due to how our solution works these swaps will not affect the efficiency. When considering whether an issue exists other driver’s schedules will be considered to be at a time less than the current simulated time by some amount of minutes L to account for potential differences due to delays.
+
+
+\section{Results} \label{grp1:results}
+
+Report on your results. 
+
+
+\section{Discussion} \label{grp1:discussion}
+
+Discuss your results
+
+\section{Conclusions/Future Work} \label{grp1:conclusions}
+Summarize and conclude and describe any future work that you might do.
+
+
+ 
+
+%%=======================================
+%%  DO NOT EDIT BELOW THIS LINE
+%%
+%% VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+\ifdefined\CLINICMAIN
+\else
+\end{document}
+\fi
+% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+%  DO NOT EDIT ABOVE THIS LINE
+%=========================================
+

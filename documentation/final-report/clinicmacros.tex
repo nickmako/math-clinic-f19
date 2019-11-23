@@ -1,0 +1,226 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% file: clinicmacros.tex  input to clinicF00.tex
+% created 12-20-00 by Harvey J. Greenberg
+% Last update: 1-3-01
+%%%%%%%%%%%%%%%%% Begin new theorems and environments %%%%%%%%%%%%%%%%%
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\tabref}[1]{Table~\ref{tab:#1}}
+%\newcommand{\eqref}[1]{(\ref{eq:#1})}
+\newcommand{\eqrefs}[2]{(\ref{eq:#1})--(\ref{eq:#2})}
+\newcommand{\thmref}[1]{Theorem~\ref{thm:#1}}
+\newcommand{\lemref}[1]{Lemma~\ref{lem:#1}}
+\newcommand{\defref}[1]{Definition~\ref{def:#1}}
+\newcommand{\corref}[1]{Corollary~\ref{cor:#1}}
+\newcommand{\propref}[1]{Proposition~\ref{prop:#1}}
+\newcommand{\asref}[1]{Assumption~\ref{ass:#1}}
+\newcommand{\asrefs}[2]{Assumptions~\ref{ass:#1}--\ref{ass:#2}}
+\newcommand{\algref}[1]{Algorithm~\ref{alg:#1}}
+\newcommand{\probref}[1]{(\ref{prob:#1})}
+\newcommand{\secref}[1]{Section~\ref{sec:#1}}
+\newcommand{\chapref}[1]{Chapter~\ref{chap:#1}}
+\newcommand{\appref}[1]{Appendix~\ref{app:#1}}
+\newcommand{\mylabel}[1]{\label{#1}}
+
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{conjecture}{Conjecture}[section]
+% definition, example and remark environments are defined in 
+% clinicPreamble to have Roman text (put term being defined into italics)
+
+\newenvironment{Srule}{\refstepcounter{rule} % cannot use rule for env name
+         \medskip\par\noindent\textbf{Rule \therule.} } {\medskip}
+
+\newenvironment{enum0}{\vspace{-.19in}\par
+                  \begin{enumerate}\setlength{\itemsep}{-.06in} }
+                      {\end{enumerate}}
+
+\newenvironment{exercise}{ \refstepcounter{exercise} 
+    \renewcommand{\labelenumi}{\theexercise.\theenumi} 
+                          \begin{description}
+                            \item [Exercise \theexercise.] }
+                         {\end{description} 
+    \renewcommand{\labelenumi}{\theenumi} }
+
+% The following needs the following defined:
+%    \title, \teacher-name, \teacher-e-mail, \teacher-web, \date
+%
+\newcommand{\makeclinictitle}{\vspace*{.6in} \begin{center}%
+                {\Large\textbf{FINAL REPORT OF THE \\
+                               UCDHSC MATHEMATICS CLINIC\\ \bigskip
+                               \title}} \\ \bigskip
+	                       {\large Taught by \\ \teachername        
+                            \\  University of Colorado at Denver
+			    \\  and Health Sciences Center 
+                            \\ Department of Mathematical Sciences
+                            \\ P.O. Box 173364
+                            \\ Denver, CO 80217-3364
+                            \\ \teacheremail
+                     \\ \bigskip \bigskip
+                       {\large Sponsored by \\ \sponsorname}
+                     \\ \bigskip \bigskip \renewcommand{\arraystretch}{1.1}
+                         \begin{tabular}{|c|} \hline
+                             \textbf{Participating students:} \\
+                              \students \\ \hline
+                         \end{tabular} \renewcommand{\arraystretch}{1}
+                     \\ \bigskip \bigskip
+                              \date} \end{center} \bigskip }
+\newcommand{\qed}{\hspace*{\fill}\rule{1.5ex}{1.5ex} }
+%%%%%%%%%%%% End newenvironments that might be disabled %%%%%%%%%%%%%%
+
+\newtheorem{algorithm}{Algorithm}
+\newenvironment{proof}{ \noindent\textbf{Proof:} }
+%                       {\hspace*{\fill}\rule{1.5ex}{1.5ex}  }
+                      {                          }
+%%%%%%%%%%%% End all newtheorem and newenvironment specs %%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Begin defs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Simply abbreviations:
+%\def\mc{\multicolumn}
+%\def\ol{\overline}    % must be in math mode
+%\def\ul{\underline}   % "
+%\def\ob{\overbrace}   % "
+%\def\ub{\underbrace}  % "
+%\def\dag{\mbox{$^\dagger$}}
+%\def\Larrow{\mbox{$\longleftarrow$}}
+%\def\Rarrow{\mbox{$\longrightarrow$}}
+%\def\Small{\scriptsize}
+%\def\st{\,:}
+\def\st{\mbox{subject to}}
+% Calligraphic font:
+\def\cA{\ensuremath{{\cal{A}}}}
+\def\cB{\ensuremath{{\cal{B}}}}
+\def\cC{\ensuremath{{\cal{C}}}}
+\def\cD{\ensuremath{{\cal{D}}}}
+\def\cE{\ensuremath{{\cal{E}}}}
+\def\cF{\ensuremath{{\cal{F}}}}
+\def\cG{\ensuremath{{\cal{G}}}}
+\def\cH{\ensuremath{{\cal{H}}}}
+\def\cI{\ensuremath{{\cal{I}}}}
+\def\cJ{\ensuremath{{\cal{J}}}}
+\def\cK{\ensuremath{{\cal{K}}}}
+\def\cL{\ensuremath{{\cal{L}}}}
+\def\cM{\ensuremath{{\cal{M}}}}
+\def\cN{\ensuremath{{\cal{N}}}}
+\def\cO{\ensuremath{{\cal{O}}}}
+\def\cP{\ensuremath{{\cal{P}}}}
+\def\cQ{\ensuremath{{\cal{Q}}}}
+\def\cR{\ensuremath{{\cal{R}}}}
+\def\cS{\ensuremath{{\cal{S}}}}
+\def\cT{\ensuremath{{\cal{T}}}}
+\def\cU{\ensuremath{{\cal{U}}}}
+\def\cV{\ensuremath{{\cal{V}}}}
+\def\cW{\ensuremath{{\cal{W}}}}
+\def\cX{\ensuremath{{\cal{X}}}}
+\def\cY{\ensuremath{{\cal{Y}}}}
+\def\cZ{\ensuremath{{\cal{Z}}}}
+
+% The following were in latex but are not in latex2e:
+\def\Box{\mbox{\begin{picture}(0,0) \put( 2,0){\framebox(7,7)} 
+               \end{picture} }}
+\def\lhd{\mbox{\large$\triangleleft$}}
+\def\rhd{\mbox{\large$\triangleright$}}
+\def\unlhd{\mbox{\underline{\large$\triangleleft$}}}
+\def\unrhd{\mbox{\underline{\large$\triangleright$}}}
+\def\Join{\mbox{$\triangleright\triangleleft$}}
+\def\mho{\mbox{\hspace*{-.04in} \rotatebox[origin=c] {180} {$\Omega$} }}
+
+% Other special characters:
+\def\cents{\mbox{{\large$c\!\!$}{\small /} }}
+\def\half{{\mbox{\small{$\frac{1}{2}$}}}}
+\def\third{{\mbox{\small{$\frac{1}{3}$}}}}
+\def\fourth{{\mbox{\small{$\frac{1}{4}$}}}}
+\def\quarter{{\mbox{\small{$\frac{1}{4}$}}}}
+\def\fifth{{\mbox{\small{$\frac{1}{5}$}}}}
+\def\sixth{{\mbox{\small{$\frac{1}{6}$}}}}
+\def\thrhlf{{\mbox{\small{$\frac{3}{2}$}}}}
+\def\twothrd{{\mbox{\small{$\frac{2}{3}$}}}}
+\def\forthrd{{\mbox{\small{$\frac{4}{3}$}}}}
+\def\fivthrd{{\mbox{\small{$\frac{5}{3}$}}}}
+\def\thrfrth{{\mbox{\small{$\frac{3}{4}$}}}}
+\def\twoffth{{\mbox{\small{$\frac{2}{5}$}}}}
+\def\thrffth{{\mbox{\small{$\frac{3}{5}$}}}}
+\def\forffth{{\mbox{\small{$\frac{4}{5}$}}}}
+
+\def\chkbox{\mbox{$\Box\hspace{-.2em}^\surd\;$}}
+\def\defeq{\mbox{$\stackrel{\rm def}{=}$}}
+\def\hence{\mbox{\footnotesize{$_\bullet$$^\bullet$$_\bullet$ }}}
+%\def\LR{{\rlap{\rm I}\hskip0.11em\hbox{\rm R}}}
+%\def\LZ{{\mbox{\rm\bf Z}}}
+\newcommand\LR{\ensuremath{\mathbb{R}}}
+\newcommand\LQ{\ensuremath{\mathbb{Q}}}
+\newcommand\LZ{\ensuremath{\mathbb{Z}}}
+\def\subdot{\mbox{\tiny$\bullet$}}
+\def\swiggle{\mbox{$\zeta$}}
+
+% The following enforce consistent notation in math mode:
+\def\dim{\mbox{{\rm dim}}}           % dimension
+%\def\rank{\mbox{{\rm rank}}}         % rank
+%\def\nul{\cN}                        % null space
+%\def\col{\mbox{{\rm col}}}           % column space
+%\def\row{\mbox{{\rm row}}}           % row space
+%\def\diag{\mbox{{\rm diag}}}         % diagonal matrix
+\def\goto{\rightarrow}               % goto (limit or map)
+\def\imply{\mbox{$\,\Rightarrow\,$}} % imply
+\def\iff{\mbox{$\Leftrightarrow$}}   % if, and only if
+\def\compl{\mbox{$^{_\sim}\!$}}      % complement (also for www)
+\def\evec{\mbox{\rm{e}}}             % e-vector
+\def\min{\mbox{\rm{min}}}            % minimize
+\def\max{\mbox{\rm{max}}}            % maximize
+\def\opt{\mbox{\rm{opt}}}            % optimize
+\def\inf{\mbox{\rm{inf}}}            % infimum
+\def\sup{\mbox{\rm{sup}}}            % supremum
+%\def\argmax{\mbox{\rm{argmax}}}      % argmax
+%\def\argmin{\mbox{\rm{argmin}}}      % argmin
+\def\det{\mbox{\rm{det}}}            % determinate
+%\def\ri{\mbox{\rm{ri}}}              % relative interior
+\def\affh{\mbox{\rm{affh}}}          % affine hull
+\def\convh{\mbox{\rm{convh}}}        % convex hull
+\def\Ext{\mbox{\rm{Ext}}}            % extreme points
+\def\Binv{{\mbox{$B^{-1}$}}}         % basis inverse
+\def\transp{\ensuremath{^{\mathsf{T}}}} % transpose
+%%%%%%%%%%%%%%%%%%%%%%%%%%% End defs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%% Begin newcommand specs %%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Functions:
+\newcommand{\cmd}[1]{\mbox{$\backslash${\sf{#1}}}}
+\newcommand{\norm}[1]{{\left\|{#1}\right\|}}
+\newcommand{\Bigfrac}[2]{\mbox{$\frac{\mbox{$#1$}}{\mbox{$#2$}}$}}
+\newcommand{\card}[1]{\mbox{\large{\bf $|$}}\mbox{$\{#1\}$}\mbox{\large{\bf $|$} }}
+\newcommand{\intval}[1]{\mbox{$\left\lfloor #1 \right\rfloor$}}
+\newcommand{\intup}[1]{\mbox{$\left\lceil #1 \right\rceil$}}
+\newcommand{\vx}[2]{\mbox{$\left(\begin{array}{c}
+                                    \!\!#1\!\! \\ \!\!#2\!\! 
+                                 \end{array}\right)$ }}
+\newcommand{\bi}[1]{\textit{\textbf{#1}}}
+\newcommand{\vect}[2]{\left(\!\begin{array}{rr} #1 \\ 
+                                                #2 \end{array}\!\right)}
+\newcommand{\mbf}[1]{\mbox{{\boldmath$#1$}}}
+\newcommand{\brackets}[1]{\left\{ {#1} \right\}}
+\newcommand{\set}[2]{\brackets{{#1} \left|\; {#2} \right.}}
+
+
+% Graphics & fonts
+\newcommand{\usc}[1]{\ul{\hspace*{#1 in}}}
+\newcommand\hr[1]{\vspace{-.2in}\begin{center}
+                        \begin{tabular}{c}\hspace*{#1in} \\ \hline
+                        \end{tabular}\end{center} }
+\newcommand{\smiley}{  $\;\;\;^{\begin{picture}(0,0)
+     \put(-8,0){\circle{9}}
+     \put(-9,1){\circle*{1}} \put(-6,1){\circle*{1}}
+     \put(-11.5,-3.6){\tiny$\smile$}
+                             \end{picture} }$} 
+\newcommand{\sadface}{ $\;\;\;^{\begin{picture}(0,0)
+     \put(-8,0){\circle{9}}
+     \put(-9,1){\circle*{1}} \put(-6,1){\circle*{1}}
+     \put(-11.5,-3.6){\tiny$\frown$}
+                             \end{picture}}$}
+% The following allows me to put a note in the margin.
+\newcommand{\MarginNote}[1]{ \hskip 1sp 
+           \marginpar{\footnotesize\sffamily\raggedright \textit{#1}} }
+%%%%%%%%%%%%%%%%%%%%%%%%%%% End of file (eof) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

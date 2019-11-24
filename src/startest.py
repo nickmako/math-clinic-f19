@@ -3,16 +3,55 @@ from matching import *
 import matplotlib.pyplot as plt
 
 
-def transition(landstart, landfinish):
+def transition(landstart, landfinish, deficits):
     # picks a transition maximizing savings if optimal transition exists and minimizing cost otherwise
     tranindex = 0
     trancost = 10000
     for z in alljobs:
         if z[0].used != 1:
-            temp = distance(z[0], landfills[landstart]) + distance(z[1], landfills[landfinish]) - distance(z[0], z[0].nearest_landfill) \
-                   - distance(z[1], z[1].nearest_landfill)
-            if z[0].nearest_landfill != z[1].nearest_landfill:
-                temp = temp - distance(z[1], z[0].nearest_landfill) + distance(z[1], z[1].nearest_landfill)
+            if deficits[4] == 1:
+                if z[1].nearest_landfill != landfills[landfinish]:
+                    temp = distance(z[0], landfills[landfinish]) + distance(z[1], landfills[landfinish]) - distance(z[0], z[0].nearest_landfill) \
+                       - distance(z[1], z[1].nearest_landfill)
+                    if z[1].can_size == '6' and deficits[0] < 0:
+                        temp = temp - 1000
+                    elif z[1].can_size == '9' and deficits[1] < 0:
+                        temp = temp - 1000
+                    elif z[1].can_size == '12' and deficits[2] < 0:
+                        temp = temp - 1000
+                    elif z[1].can_size == '16' and deficits[3] < 0:
+                        temp = temp - 1000
+                else:
+                    temp = 1000
+            elif deficits[4] > 1:
+                if z[1].nearest_landfill != landfills[landfinish]:
+                    temp = distance(z[0], landfills[landfinish]) + distance(z[1], landfills[landfinish]) - distance(z[0], z[0].nearest_landfill) \
+                       - distance(z[1], z[1].nearest_landfill)
+                    if z[1].can_size == '6' and deficits[0] < 0:
+                        temp = temp - 1000
+                    elif z[1].can_size == '9' and deficits[1] < 0:
+                        temp = temp - 1000
+                    elif z[1].can_size == '12' and deficits[2] < 0:
+                        temp = temp - 1000
+                    elif z[1].can_size == '16' and deficits[3] < 0:
+                        temp = temp - 1000
+                else:
+                    temp = 1000
+            else:
+                temp = distance(z[0], landfills[landstart]) + distance(z[1], landfills[landfinish]) - distance(z[0], z[0].nearest_landfill) \
+                       - distance(z[1], z[1].nearest_landfill)
+                if z[0].nearest_landfill != z[1].nearest_landfill:
+                    temp = temp - distance(z[1], z[0].nearest_landfill) + distance(z[1], z[1].nearest_landfill)
+
+            if deficits[4] > 0:
+                if z[1].can_size == '6' and z[1].nearest_landfill.num6 < 1:
+                    temp = 1000
+                elif z[1].can_size == '9' and z[1].nearest_landfill.num9 < 1:
+                    temp = 1000
+                elif z[1].can_size == '12' and z[1].nearest_landfill.num12 < 1:
+                    temp = 1000
+                elif z[1].can_size == '16' and z[1].nearest_landfill.num16 < 1:
+                    temp = 1000
         else:
             temp = 10000
         if temp < trancost:
@@ -20,6 +59,19 @@ def transition(landstart, landfinish):
             tranindex = z
     tranindex[0].transition_cost = distance(tranindex[0], landfills[landstart]) + distance(tranindex[1], landfills[landfinish]) \
                                    + distance(tranindex[0], tranindex[1])
+    if tranindex[1].nearest_landfill != landfills[landfinish]:
+        if tranindex[1].can_size == '6':
+            landfills[landfinish].num6 += 1
+            tranindex[1].nearest_landfill.num6 += -1
+        elif tranindex[1].can_size == '9':
+            landfills[landfinish].num9 += 1
+            tranindex[1].nearest_landfill.num9 += -1
+        elif tranindex[1].can_size == '12':
+            landfills[landfinish].num12 += 1
+            tranindex[1].nearest_landfill.num12 += -1
+        elif tranindex[1].can_size == '16':
+            landfills[landfinish].num16 += 1
+            tranindex[1].nearest_landfill.num16 += -1
     return tranindex
 
 
@@ -52,8 +104,9 @@ def assignroute(driver0, driverstop0, route, transitiontrue, tolandfill):
     else:
         drivertime[driver0][0] = drivertime[driver0][0] + distance(route[0], route[0].nearest_landfill) \
                                       + distance(route[1], route[1].nearest_landfill) + distance(route[0], route[1])
-    route[0].used = True
     # then add the locations that are part of the route to the drivers route
+    route[0].used = True
+
     if route[0].address == route[1].address:
         driversschedule[driver][driverstop0] = route[0]
         driverstop0 += 1
@@ -69,8 +122,8 @@ def assignroute(driver0, driverstop0, route, transitiontrue, tolandfill):
     return driverstop0
 
 
-with open('../data/sample1/jobs.csv', 'rb') as f:
-# with open('jobs.csv', 'rb') as f:
+# with open('../data/sample1/jobs.csv', 'rb') as f:
+with open('jobs.csv', 'rb') as f:
     data = [line[:-1].decode('utf-8').split(',') for line in f][1:]
 
 landfills = [Landfill.from_csv(l) for l in data if l[6] == "S"]
@@ -78,8 +131,41 @@ deliveries = [ServiceSite.from_csv(d) for d in data if d[6] == "D"]
 pickups = [ServiceSite.from_csv(p) for p in data if p[6] == "P"]
 switches = [ServiceSite.from_csv(s) for s in data if s[6] == "AA"]
 jobs = deliveries + pickups + switches
+base = 1
+
+for x in landfills:
+    if base == 1:
+        x.num6 = 10
+        x.num9 = 10
+        x.num12 = 10
+        x.num16 = 10
+        base = 0
+    else:
+        x.num6 = 0
+        x.num9 = 0
+        x.num12 = 0
+        x.num16 = 0
+
 for x in jobs:
     x.calc_nearest_landfill(landfills)
+    if x.service_type == 'D':
+        if x.can_size == '12':
+            x.nearest_landfill.num12 += -1
+        if x.can_size == '9':
+            x.nearest_landfill.num9 += -1
+        if x.can_size == '6':
+            x.nearest_landfill.num6 += -1
+        if x.can_size == '16':
+            x.nearest_landfill.num16 += -1
+    elif x.service_type == 'P':
+        if x.can_size == '12':
+            x.nearest_landfill.num12 += 1
+        if x.can_size == '9':
+            x.nearest_landfill.num9 += 1
+        if x.can_size == '6':
+            x.nearest_landfill.num6 += 1
+        if x.can_size == '16':
+            x.nearest_landfill.num16 += 1
 
 pairs1 = calc_DP_pairs(list(deliveries), list(pickups), same_landfill=False)
 pairs2 = calc_DP_pairs(list(deliveries), list(pickups), same_landfill=True)
@@ -107,12 +193,64 @@ while finish < 1:
     drivertime[driver][0] = 0
     driversschedule[driver][0] = landfills[0]
     temp_landfill = current_landfill
+    fix = 0
+    deficit = [0, 0, 0, 0, 0]
+    zeroarray = [0, 0, 0, 0, 0]
     # if landfill isn't the base assign transitions there and back
     if current_landfill > 0:
-        transition1 = transition(base, current_landfill)
+        if landfills[current_landfill].num6 < 0:
+            deficit[0] = landfills[current_landfill].num6
+            deficit[4] = deficit[4] - landfills[current_landfill].num6
+        if landfills[current_landfill].num9 < 0:
+            deficit[1] = landfills[current_landfill].num9
+            deficit[4] = deficit[4] - landfills[current_landfill].num9
+        if landfills[current_landfill].num12 < 0:
+            deficit[2] = landfills[current_landfill].num12
+            deficit[4] = deficit[4] - landfills[current_landfill].num12
+        if landfills[current_landfill].num16 < 0:
+            deficit[3] = landfills[current_landfill].num16
+            deficit[4] = deficit[4] - landfills[current_landfill].num16
+        transition1 = transition(base, current_landfill, deficit)
         driverstop = assignroute(driver, driverstop, transition1, True, temp_landfill)
+        if deficit[4] > 0:
+            deficit[4] += -1
+            if transition1[1].can_size == '6':
+                deficit[0] += 1
+                landfills[current_landfill].num6 += 1
+            elif transition1[1].can_size == '9':
+                deficit[1] += 1
+                landfills[current_landfill].num9 += 1
+            elif transition1[1].can_size == '12':
+                deficit[2] += 1
+                landfills[current_landfill].num12 += 1
+            elif transition1[1].can_size == '16':
+                deficit[3] += 1
+                landfills[current_landfill].num16 += 1
+        if deficit[0] < 0 or deficit[1] < 0 or deficit[2] < 0 or deficit[3] < 0:
+            fix = 1
+            while fix > 0:
+                clone = deficit[4]
+                deficit[4] = 1
+                transitionf = transition(base, current_landfill, deficit)
+                deficit[4] = clone-1
+                driverstop = assignroute(driver, driverstop, transitionf, True, temp_landfill)
+                if transition1[1].can_size == '6':
+                    deficit[0] += 1
+                    landfills[current_landfill].num6 += 1
+                elif transition1[1].can_size == '9':
+                    deficit[1] += 1
+                    landfills[current_landfill].num9 += 1
+                elif transition1[1].can_size == '12':
+                    deficit[2] += 1
+                    landfills[current_landfill].num12 += 1
+                elif transition1[1].can_size == '16':
+                    deficit[3] += 1
+                    landfills[current_landfill].num16 += 1
+                if deficit[4] < 1:
+                    fix = 0
+
         # transition 2 is determined for calculations, but not assigned immediately as it may be discarded
-        transition2 = transition(base, current_landfill)
+        transition2 = transition(base, current_landfill, zeroarray)
     # while loop runs until driver's schedule is full
     while nextdriver < 1:
         # determine a nontransition route if any exist for the landfill the driver is at
@@ -143,8 +281,8 @@ while finish < 1:
             else:
                 temp_landfill = current_landfill
                 current_landfill = current_landfill - 1
-                transition3 = transition(temp_landfill, current_landfill)
-                transition4 = transition(current_landfill, base)
+                transition3 = transition(temp_landfill, current_landfill, zeroarray)
+                transition4 = transition(current_landfill, base, zeroarray)
                 # if bothe new transitions can be done without willing the day the transition to the next landfill is assigned
                 # and the new transition to base replaces the old transition 2
                 if transition4[0].transition_cost + transition3[0].transition_cost + drivertime[driver][0] < fullday:
@@ -159,12 +297,25 @@ while finish < 1:
             finish = 1
             nextdriver = 1
     driver += 1
+
 total = 0
+
+j = 1
+for x in driversschedule:
+    pd = ""
+    if x[0] != 0:
+        print("")
+        print("Driver " + str(j) + "'s schedule:")
+        for y in x:
+            if y != 0:
+                print(y.address)
+    j += 1
 for x in drivertime:
     total = total+x[0]
-print(total)
 
+print(total)
 for driver in driversschedule:
+
     plt.plot([x.lonlat[0] for x in driver if not isinstance(x,(int,float))],
             [x.lonlat[1] for x in driver if not isinstance(x,(int,float))])
 
@@ -179,7 +330,5 @@ for s in switches:
 
 for l in landfills:
     plt.plot(l.lonlat[0], l.lonlat[1], 'bo', markersize=7)
-
-
 
 plt.show()

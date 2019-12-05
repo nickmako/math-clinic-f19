@@ -478,7 +478,26 @@ def scheduleout(driversschedule, drivertime):
         print("")
         print("Driver " + str(j) + "'s schedule:")
         for y in x:
-            print(y.address)
+            sizestring = ""
+            timestring = ""
+            if y.service_type == 'L':
+                stype = "Landfill"
+            elif y.service_type == 'S':
+                stype = "Switch"
+                sizestring = " of size:" + y.can_size
+                y.schedule_time = round(y.schedule_time)
+                timestring = " at time:" + str(y.schedule_time)
+            elif y.service_type == 'D':
+                stype = "Delivery"
+                sizestring = " of size:" + y.can_size
+                y.schedule_time = round(y.schedule_time)
+                timestring = " at time:" + str(y.schedule_time)
+            else:
+                stype = "Pickup"
+                sizestring = " of size:" + y.can_size
+                y.schedule_time = round(y.schedule_time)
+                timestring = " at time:" + str(y.schedule_time)
+            print(y.address + " This is a " + stype + sizestring + timestring)
         j += 1
     for y in drivertime:
         total = total+y[0]

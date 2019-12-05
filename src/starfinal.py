@@ -63,13 +63,13 @@ def swap(route, schedule, node, buffer, fullday):
 
 # variables to change:
 # multiplier for drive time to account traffic etc.
-drivermultiplier = 1.1
+drivermultiplier = 1.0
 # fixed times in minutes divided by driver multiplier
-emptytime = 5
-servicetime = 5
+emptytime = 0
+servicetime = 0
 canswaptime = 5
 buffer = 30
-fullday = 480
+fullday = 300
 # fullday >= Sum(Route*DM+modifiers)
 # number of nodes -1
 current_landfill = 3
@@ -115,7 +115,10 @@ authenticate(driversschedule, buffer, fullday)
 total = scheduleout(driversschedule, drivertime)
 teleporttotal = 0
 for x in alljobs:
-    teleporttotal = teleporttotal + distance(x[0], x[0].nearest_landfill) + distance(x[1], x[1].nearest_landfill) + distance(x[0], x[1])
+    if x[0] == x[1]:
+        teleporttotal = teleporttotal + (distance(x[0], x[0].nearest_landfill) + distance(x[1], x[1].nearest_landfill) + distance(x[0], x[1]))*drivermultiplier + servicetime + emptytime
+    else:
+        teleporttotal = teleporttotal + (distance(x[0], x[0].nearest_landfill) + distance(x[1], x[1].nearest_landfill) + distance(x[0], x[1]))*drivermultiplier + 2*servicetime + emptytime
 print(teleporttotal)
 print(total)
 

@@ -209,7 +209,7 @@ def createschedule(current_landfill, emptytime, servicetime, canswaptime, fullda
                     transitionf = transition(base, current_landfill, deficit, alljobs, landfills)
                     deficit[4] = clone-1
                     driverstop = assignroute(driver, driverstop, transitionf, True, temp_landfill, driversschedule, drivertime, landfills, emptytime, servicetime, canswaptime, drivermultiplier)
-                    test = nontransition(temp_landfill, alljobs, landfills)
+                    test = nontransition(temp_landfill, alljobs, landfills, driversschedule, driver, driverstop, canswaptime)
                     if test == -1:
                         driversschedule[driver][driverstop - 1].node_shift = True
                     if transition1[1].can_size == '6':
@@ -232,7 +232,7 @@ def createschedule(current_landfill, emptytime, servicetime, canswaptime, fullda
         # while loop runs until driver's schedule is full
         while nextdriver < 1:
             # determine a nontransition route if any exist for the landfill the driver is at
-            nontran = nontransition(temp_landfill, alljobs, landfills)
+            nontran = nontransition(temp_landfill, alljobs, landfills, driversschedule, driver, driverstop, canswaptime)
             if nontran != -1:
                 # if the landfill is not the base the transition is counted against the full day to determine whether the route can be used
                 if temp_landfill > 0:
@@ -248,7 +248,7 @@ def createschedule(current_landfill, emptytime, servicetime, canswaptime, fullda
                         driverstop = assignroute(driver, driverstop, nontran, False, temp_landfill, driversschedule, drivertime, landfills, emptytime, servicetime, canswaptime, drivermultiplier)
                     else:
                         nextdriver = 1
-                test = nontransition(temp_landfill, alljobs, landfills)
+                test = nontransition(temp_landfill, alljobs, landfills, driversschedule, driver, driverstop, canswaptime)
                 if test == -1:
                     driversschedule[driver][driverstop-1].node_shift = True
             # if no more non tran routes exist for the landfill the landfill is changed if not the base and if it is the base the day is finished
@@ -378,7 +378,7 @@ def transition(landstart, landfinish, deficits, alljobs, landfills):
     return tranindex
 
 
-def nontransition(landcurr, alljobs, landfills):
+def nontransition(landcurr, alljobs, landfills, driversschedule, driver, driverstop, canswaptime):
     # finds unused routes for the current landfill and picks the one furthest from the base
     # while highly penalized routes with just the delivery in the zone will be picked if no other legal routes exist
     cost = ind = -1
@@ -387,6 +387,9 @@ def nontransition(landcurr, alljobs, landfills):
             if x[0].nearest_landfill == x[1].nearest_landfill == landfills[landcurr]:
                 temp1 = distance(x[0], landfills[0]) - distance(x[0], x[0].nearest_landfill) + distance(x[1], landfills[0]) \
                         - distance(x[1], x[1].nearest_landfill)
+                if canswaptime > 0:
+                    if driverstop > 2 and x[0].can_size == driversschedule[driver][driverstop-2].can_size:
+                        temp1 += 100
                 if temp1 > cost:
                     cost = temp1
                     ind = x
@@ -445,7 +448,7 @@ def assignroute(driver, driverstop, route, transitiontrue, tolandfill, driverssc
             driversschedule[driver][driverstop] = landfills[tolandfill]
             if route[0].service_type == 'S' or 'D':
                 route[0].schedule_time = drivertime[driver][0]
-            drivertime[driver][0] = (drivertime[driver][0] + distance(route[0], route[0].nearest_landfill)
+            drivertime[driver][0] = drivertime[driver][0] + (distance(route[0], route[0].nearest_landfill)
                                     + distance(route[1], route[1].nearest_landfill) + distance(route[0], route[1]))*drivermultiplier + servicetime + emptytime
             if route[0].service_type == 'P':
                 route[0].schedule_time = drivertime[driver][0]
@@ -461,7 +464,7 @@ def assignroute(driver, driverstop, route, transitiontrue, tolandfill, driverssc
             driversschedule[driver][driverstop] = landfills[tolandfill]
             route[1].used = True
             route[0].schedule_time = drivertime[driver][0]
-            drivertime[driver][0] = (drivertime[driver][0] + distance(route[0], route[0].nearest_landfill)
+            drivertime[driver][0] = drivertime[driver][0] + (distance(route[0], route[0].nearest_landfill)
                                     + distance(route[1], route[1].nearest_landfill) + distance(route[0], route[1]))*drivermultiplier + 2*servicetime + emptytime
             route[1].schedule_time = drivertime[driver][0]
     driverstop += 1
